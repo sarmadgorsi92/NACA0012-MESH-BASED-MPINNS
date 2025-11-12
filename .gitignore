@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Temporary/diagnostic files
+alignment_check.png
+
+# Model files
+*.pth
+
+# Output files (user-generated)
+results_AOA*.dat
+cp_AOA*.dat
+loss_history.png
+training_points_aoa*.png
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

@@ -34,7 +34,7 @@ if __name__ == "__main__":
     parser.add_argument('--aoa_min', type=float, default=0, help='Minimum angle of attack (deg)')
     parser.add_argument('--aoa_max', type=float, default=1, help='Maximum angle of attack (deg)')
     parser.add_argument('--aoa_step', type=float, default=1, help='AOA step (deg)')
-    parser.add_argument('--mesh_file', type=str, default="MESH(C27K).dat", help='Path to structured mesh file')
+    parser.add_argument('--mesh_file', type=str, default="MESH-POINTS.dat", help='Path to structured mesh file')
     args = parser.parse_args()
 
 

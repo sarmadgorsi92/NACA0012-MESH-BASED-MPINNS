@@ -33,7 +33,8 @@ def write_cp_tecplot(model, airfoil_points_aoa, rho, U_inf, p_inf, lb, ub, chord
 def write_results_to_file(model, chord, U_inf, rho, output_file='results.dat', aoa=0, mesh_info=None, aoa_min=0,
                           aoa_max=3):
     """
-    ✅ Already correct - writes results in physical space
+    Write flow field results to Tecplot format file.
+    ✅ FIXED: Mesh is now correctly reshaped as (ny, nx) for proper coordinate mapping.
     """
     if mesh_info is None:
         raise ValueError("mesh_info must be provided for mesh-based output.")
@@ -49,8 +50,9 @@ def write_results_to_file(model, chord, U_inf, rho, output_file='results.dat', a
     y_mesh_norm = minmax_normalize(y_mesh, lb[1], ub[1])
     pts = np.stack([x_mesh_norm, y_mesh_norm, np.full_like(x_mesh_norm, aoa_norm)], axis=1)
 
-    X = x_mesh.reshape(nx, ny).T
-    Y = y_mesh.reshape(nx, ny).T
+    # Reshape mesh coordinates: data is stored row-wise (ny rows × nx columns)
+    X = x_mesh.reshape(ny, nx)
+    Y = y_mesh.reshape(ny, nx)
 
     pts_torch = torch.tensor(pts, dtype=torch.float32, device=next(model.parameters()).device)
     with torch.no_grad():
@@ -59,9 +61,10 @@ def write_results_to_file(model, chord, U_inf, rho, output_file='results.dat', a
     v = pred[:, 1].cpu().numpy() * U_inf
     p_star = pred[:, 2].cpu().numpy()
     p = p_star * rho * U_inf ** 2
-    u = u.reshape(nx, ny).T
-    v = v.reshape(nx, ny).T
-    p = p.reshape(nx, ny).T
+    # Reshape solution fields: same order as mesh (ny rows × nx columns)
+    u = u.reshape(ny, nx)
+    v = v.reshape(ny, nx)
+    p = p.reshape(ny, nx)
 
     with open(output_file, 'w', newline='\n') as f:
         f.write(f'# AoA (deg) = {aoa}\n')
